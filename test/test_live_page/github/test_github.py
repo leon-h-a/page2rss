@@ -1,11 +1,12 @@
 import unittest
 from pathlib import Path
 from page2rss.scrape.scraper import Scraper
+from page2rss.models.rss20 import RSSPage
 from page2rss.xml.xml import XML 
 from page2rss import TEST_ROOT 
 
 
-class TestScraperGithub(unittest.TestCase):
+class TestGithub(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.sc = Scraper(data_dir=Path(""))
@@ -27,8 +28,17 @@ class TestScraperGithub(unittest.TestCase):
         scraped_article = self.sc.article_scrape(articles[0])
         # todo: add some asserts
 
-        asdf = self.xm.xml_generate_item(scraped_article)
-        print(asdf)
+        # print(scraped_article.xml())
+
+        asdf = RSSPage(
+            title="asdf",
+            link="",
+            description="",
+            articles=[scraped_article]
+        )
+
+        print(asdf.xml())
+
 
     @classmethod
     def tearDownClass(cls):
