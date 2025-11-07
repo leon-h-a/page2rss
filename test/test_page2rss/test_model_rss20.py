@@ -17,6 +17,13 @@ page_full = """<?xml version="1.0" encoding="UTF-8"?>
                 <channel></channel>
               </channel>
         </rss>"""
+page_with_two_articles = """<?xml version="1.0" encoding="UTF-8"?>
+            <rss version="2.0"
+                 xmlns:content="http://purl.org/rss/1.0/modules/content/">
+              <channel>
+                <channel><item><title>first article</title><link /><description /><content:encoded>&lt;![CDATA[]]&gt;</content:encoded></item><item><title>second article</title><link /><description /><content:encoded>&lt;![CDATA[]]&gt;</content:encoded></item></channel>
+              </channel>
+        </rss>"""
 
 
 class TestRSS20Article(unittest.TestCase):
@@ -86,6 +93,31 @@ class TestRSS20Page(unittest.TestCase):
             skipDays="2",
         )
         self.assertEqual(page.xml(), page_full)
+
+    @classmethod
+    def tearDownClass(cls):
+        pass
+
+
+class TestRSS20PageWithArticle(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        pass
+
+    def test_page_with_article(self):
+        article1 = RSSArticle(
+            title="first article"
+        )
+        article2 = RSSArticle(
+            title="second article"
+        )
+        page = RSSPage(
+            title="some main page",
+            link="some article",
+            description="some article",
+            articles=[article1, article2]
+        )
+        self.assertEqual(page.xml(), page_with_two_articles)
 
     @classmethod
     def tearDownClass(cls):
