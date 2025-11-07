@@ -105,5 +105,4 @@ class RSSPage:
               <channel>
                 {content}
               </channel>
-        </rss>
-        """
+        </rss>"""
