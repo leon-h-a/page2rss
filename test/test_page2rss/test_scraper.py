@@ -1,7 +1,6 @@
 import unittest
 from page2rss.scrape.scraper import Scraper
 from page2rss import TEST_INPUT_DIR, TEST_OUTPUT_DIR 
-from test.test_page2rss import logger
 
 
 class TestScraper(unittest.TestCase):
@@ -23,7 +22,6 @@ class TestScraper(unittest.TestCase):
     def test_article_get(self):
         page = self.sc.index_load(TEST_INPUT_DIR / "news.html")
         hrefs = self.sc.article_get(page, tag="a", designator="article-link")
-        logger.info(hrefs)
         self.assertEqual(
             hrefs,
             [
