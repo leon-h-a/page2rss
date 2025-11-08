@@ -1,6 +1,6 @@
 # page2rss specific
-src/page2rss/pages/*
-test/data/*
+src/page2rss/data/*
+test/test_page2rss/data/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
