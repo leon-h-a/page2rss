@@ -8,7 +8,9 @@ log_format = logging.Formatter(
 )
 
 PROJECT_ROOT: Path = Path(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR: Path = PROJECT_ROOT / "data"
+INPUT_DIR: Path = PROJECT_ROOT / "pages"
+OUTPUT_DIR: Path = PROJECT_ROOT / "xml_output"
 
-TEST_ROOT: Path = Path(os.path.dirname(os.path.abspath(__file__))).parent.parent / "test"
-TEST_DATA_DIR: Path = TEST_ROOT / "data"
+TEST_ROOT: Path = Path(os.path.dirname(os.path.abspath(__file__))).parent.parent / "test/test_page2rss"
+TEST_INPUT_DIR: Path = TEST_ROOT / "pages"
+TEST_OUTPUT_DIR: Path = TEST_ROOT / "xml_output"
