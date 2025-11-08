@@ -1,29 +1,56 @@
 import unittest
 from page2rss.models.rss20 import RSSPage, RSSArticle
 
-article_mandatory = "<item><title>some article</title><link /><description /><content:encoded>&lt;![CDATA[]]&gt;</content:encoded></item>"
-article_full = "<item><title>another article</title><link>https://some.link.com</link><description>short description</description><content:encoded>&lt;![CDATA[]]&gt;</content:encoded><author>r, a, n, d, o, m</author><category>bla</category><pubDate>Wed, 07 Nov 2025 15:30:00 GMT</pubDate></item>"
-page_mandatory = """<?xml version="1.0" encoding="UTF-8"?>
-            <rss version="2.0"
-                 xmlns:content="http://purl.org/rss/1.0/modules/content/">
-              <channel>
-                <channel></channel>
-              </channel>
-        </rss>"""
-page_full = """<?xml version="1.0" encoding="UTF-8"?>
-            <rss version="2.0"
-                 xmlns:content="http://purl.org/rss/1.0/modules/content/">
-              <channel>
-                <channel></channel>
-              </channel>
-        </rss>"""
-page_with_two_articles = """<?xml version="1.0" encoding="UTF-8"?>
-            <rss version="2.0"
-                 xmlns:content="http://purl.org/rss/1.0/modules/content/">
-              <channel>
-                <channel><item><title>first article</title><link /><description /><content:encoded>&lt;![CDATA[]]&gt;</content:encoded></item><item><title>second article</title><link /><description /><content:encoded>&lt;![CDATA[]]&gt;</content:encoded></item></channel>
-              </channel>
-        </rss>"""
+article_mandatory = '<item xmlns:content="http://purl.org/rss/1.0/modules/content/"><title>some article</title><link></link><description></description><content:encoded><![CDATA[]]></content:encoded></item>'
+article_full = '<item xmlns:content="http://purl.org/rss/1.0/modules/content/"><title>another article</title><link>https://some.link.com</link><description>short description</description><content:encoded><![CDATA[]]></content:encoded><author>r, a, n, d, o, m</author><category>bla</category><pubDate>Wed, 07 Nov 2025 15:30:00 GMT</pubDate></item>'
+page_mandatory = """<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+  <channel>
+    <title>some main page</title>
+    <link>some article</link>
+    <description>some article</description>
+  </channel>
+</rss>
+"""
+page_full = """<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+  <channel>
+    <title>another main page</title>
+    <link>https://some.link.com</link>
+    <description>some desc</description>
+    <language>en</language>
+    <copyright>no</copyright>
+    <managingEditor>AE</managingEditor>
+    <webMaster>EA</webMaster>
+    <pubDate>Wed, 07 Nov 2025 15:30:00 GMT</pubDate>
+    <lastBuildDate>Wed, 07 Nov 2025 15:30:00 GMT</lastBuildDate>
+    <category>no</category>
+    <generator>some</generator>
+    <ttl>-1</ttl>
+  </channel>
+</rss>
+"""
+page_with_two_articles = """<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+  <channel>
+    <title>some main page</title>
+    <link>https://some.link.com</link>
+    <description>some article</description>
+    <item>
+      <title>first article</title>
+      <link/>
+      <description/>
+      <content:encoded></content:encoded>
+    </item>
+    <item>
+      <title>second article</title>
+      <link/>
+      <description/>
+      <content:encoded></content:encoded>
+    </item>
+  </channel>
+</rss>
+"""
 
 
 class TestRSS20Article(unittest.TestCase):
@@ -113,7 +140,7 @@ class TestRSS20PageWithArticle(unittest.TestCase):
         )
         page = RSSPage(
             title="some main page",
-            link="some article",
+            link="https://some.link.com",
             description="some article",
             articles=[article1, article2]
         )
