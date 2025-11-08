@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from xml.dom import minidom
 import xml.etree.ElementTree as ET
 from xml.sax.saxutils import escape
 from page2rss.models import logger
@@ -10,9 +9,11 @@ class RSSArticle:
     """
     RSS 2.0 spec
     """
+    # mandatory
     title: str
     description: str = ""
 
+    # non-mandatory
     link: str = ""
     author: str = ""
     category: str = ""
@@ -71,10 +72,12 @@ class RSSPage:
     """
     RSS 2.0 spec
     """
+    # mandatory
     title: str
     link: str
     description: str
 
+    # non-mandatory
     language: str = ""
     copyright: str = ""
     managingEditor: str = ""
