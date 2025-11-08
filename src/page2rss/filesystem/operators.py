@@ -1,4 +1,6 @@
 import os
+import tempfile
+import traceback
 from pathlib import Path
 from xml.dom import minidom
 from page2rss import OUTPUT_DIR
@@ -12,9 +14,17 @@ def xml_page_save(page: RSSPage, output_dir: Path = OUTPUT_DIR) -> None:
     filename = page.title.replace(" " ,"_") + ".xml"
     logger.info(f"sanitize '{page.title}' to '{filename}'")
 
-    with open(output_dir / filename, "w", encoding="utf-8") as f:
-        f.write(pprint)
-    logger.info(f"successful save {str(output_dir / filename)}")
+    fd, t_path = tempfile.mkstemp(
+        dir=output_dir, prefix=".tmp."
+    ) 
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(pprint)
+        os.replace(t_path, output_dir / filename)
+        logger.info(f"successful save {str(output_dir / filename)}")
+
+    except Exception:
+        logger.warning(traceback.format_exc())
 
 
 def xml_page_remove(filename: str, output_dir: Path = OUTPUT_DIR)  -> None:
