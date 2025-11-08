@@ -1,5 +1,5 @@
 # page2rss specific
-src/page2rss/data/*
+src/page2rss/pages/*
 test/data/*
 
 # Byte-compiled / optimized / DLL files
