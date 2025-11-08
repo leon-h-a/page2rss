@@ -7,3 +7,4 @@ class PageEntry:
     url: str = ""
     tag: str = ""
     css: str = ""
+    prefix: str = ""

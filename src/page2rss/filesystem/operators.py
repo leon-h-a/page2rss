@@ -36,6 +36,9 @@ def xml_page_remove(filename: str, output_dir: Path = OUTPUT_DIR)  -> None:
     except FileNotFoundError:
         logger.warning(f"file not found {str(output_dir / filename)}")
 
+def page_def_list(page_list_dir: Path = PAGE_LIST) -> list[str]:
+    with open(page_list_dir, "r") as pgl:
+        return list(json.load(pgl))
 
 def page_def_read(nick: str, page_list_dir: Path = PAGE_LIST) -> PageEntry | None:
     with open(page_list_dir, "r") as pgl:
@@ -46,7 +49,8 @@ def page_def_read(nick: str, page_list_dir: Path = PAGE_LIST) -> PageEntry | Non
         page_def = PageEntry(
             url=page_def_raw["url"],
             tag=page_def_raw["tag"],
-            css=page_def_raw["css"]
+            css=page_def_raw["css"],
+            prefix=page_def_raw["prefix"]
         )
         logger.info(page_def)
         return page_def
@@ -62,13 +66,14 @@ def page_def_update(page: PageEntry, page_list_dir: Path = PAGE_LIST) -> bool:
         page_list[page.nick] = dict(
             url=page.url,
             tag=page.tag,
-            css=page.css
+            css=page.css,
+            prefix=page.prefix
         )
 
     fd, t_path = tempfile.mkstemp(dir=page_list_dir.parent, suffix=".tmp.") 
     try:
         with os.fdopen(fd, "a", encoding="utf-8") as pgl:
-            pgl.write(json.dumps(page_list))
+            pgl.write(json.dumps(page_list, indent=2))
 
         os.replace(t_path, page_list_dir) 
         logger.info(f"successful update page list with {page}")
