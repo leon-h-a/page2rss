@@ -38,17 +38,21 @@ class Scraper:
                 html = file.read()
                 article.download(input_html=html)
         else:
-            article.download(input_html=requests.get(href, verify=False).text)
+            article.download(input_html=requests.get(ref, verify=False).text)
         return article
 
     def load_page_list(self) -> list[Path]:
         logger.debug(self.input_dir)
         return list(self.input_dir.rglob("*.html"))
 
-    def index_load(self, page_path: Path) -> BeautifulSoup:
-        logger.info(f"loading {page_path}")
-        with open(page_path, 'r') as index:
-            return BeautifulSoup(index.read(), "html.parser")
+    def index_load(self, ref: str, local_file: bool = False) -> BeautifulSoup:
+        if local_file:
+            logger.info(f"loading local {ref}")
+            with open(ref, 'r') as index:
+                return BeautifulSoup(index.read(), "html.parser")
+        else:
+            index = self._get_resource(ref=ref)
+            return BeautifulSoup(index.html, "html.parser")
 
     def article_get(self, bs: BeautifulSoup, tag: str, designator: str) -> list[str]:
         """
@@ -76,7 +80,7 @@ class Scraper:
             description=article.meta_description or "",
             language=article.meta_lang or "",
             pubDate=format_datetime(article.publish_date) if article.publish_date else "",
-            category=article.meta_keywords or "",
+            category=", ".join(article.meta_keywords) if article.meta_keywords else "",
             image=article.top_image or "",
             managingEditor=article.authors[0] if article.authors else "",
             articles=[]
@@ -100,7 +104,7 @@ class Scraper:
             top_image=article.top_image,
             link=ref,
             author=article.authors,
-            pubDate=format_datetime(article.publish_date)
+            pubDate=format_datetime(article.publish_date) if article.publish_date else ""
         )
         return rss_article 
 
