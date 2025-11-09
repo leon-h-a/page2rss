@@ -1,0 +1,32 @@
+.main-container {
+    color: black;
+}
+
+.content {
+    background-color: white;
+    padding-top: 2rem; 
+    max-width: 1000px;
+    margin: auto;
+}
+
+.title {
+    width: 90%;
+    margin: auto;
+    text-align: center;
+}
+
+.parameter-container {
+    padding-top: 3rem;
+    width: 80%;
+    margin: auto;
+}
+
+.add-entry-button-container {
+    padding-top: 3rem;
+    width: 100%;
+    text-align: center;
+}
+
+.add-entry-button {
+    width: 200px;
+}
