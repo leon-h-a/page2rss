@@ -1,0 +1,10 @@
+[Unit]
+Description=page2rss webapp
+
+[Service]
+Type=simple
+ExecStart=/path/to/python3 /path/to/webapp/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=page2rss scraper
+
+[Service]
+Type=simple
+ExecStart=/path/to/python3 /path/to/main/scraper.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
