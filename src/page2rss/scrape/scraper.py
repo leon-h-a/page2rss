@@ -1,11 +1,19 @@
+import time
 import requests
 from pathlib import Path
+from configparser import ConfigParser
 from bs4 import BeautifulSoup
 from newspaper import Article
+from page2rss.filesystem.operators import page_def_list
 from readability import Document
 from email.utils import format_datetime
-from page2rss import INPUT_DIR, OUTPUT_DIR
 from page2rss.models.rss20 import RSSArticle, RSSPage
+from page2rss import CONFIG, INPUT_DIR, OUTPUT_DIR
+from page2rss.filesystem.operators import (
+    page_def_list,
+    page_def_read,
+    xml_page_save
+)
 from page2rss.scrape import logger
 
 import nltk
@@ -28,8 +36,38 @@ class Scraper:
         """
         self.input_dir = input_dir 
         self.output_dir = output_dir
-        self.supported_tags = ["a"]
         self.use_nlp = use_nlp
+
+        parser = ConfigParser()
+        parser.read(CONFIG)
+        self.cfg = parser["scrape"]
+        self.article_limit = int(self.cfg.get("article_limit", "3"))
+        self.scrape_period = int(self.cfg.get("scrape_period", "0"))
+
+    def run(self):
+        while True:
+            nicks = page_def_list()
+            for nick in nicks:
+                page_def = page_def_read(nick)
+                if page_def:
+                    page = self.page_scrape(ref=page_def.url)
+                    index = self.index_load(ref=page_def.url)
+                    articles = self.article_get(
+                        bs=index,
+                        tag=page_def.tag,
+                        designator=page_def.css
+                    )
+                    scraped: list[RSSArticle] = []
+                    if articles:
+                        for article in articles:
+                            full_link = page_def.prefix + article
+                            scraped.append(self.article_scrape(ref=full_link))
+                        page.articles = scraped
+                        xml_page_save(page)
+                    else:
+                        logger.warning("no articles found")
+
+            time.sleep(self.scrape_period * 60)
 
     def _get_resource(self, ref: str, local_file: bool = False) -> Article:
         article = Article(ref if not local_file else "")
@@ -59,12 +97,17 @@ class Scraper:
         tag: str            html element (div/article/a)
         designator: str     css identificator of said element
         """
-        if tag not in self.supported_tags:
-            raise ValueError(f"tag '{tag}' not supported")
-
-        logger.info(f"find all <{tag}> with '{designator}' designator")
         hits = bs.find_all(tag, designator)
-        return [hit["href"] for hit in hits]
+        logger.info(f"find all <{tag}> with '{designator}' designator: {hits}")
+
+        hrefs = []
+        for hit in hits:
+            hrefs.extend([link['href'] for link in hit.find_all('a', href=True)])
+
+        if not hrefs:
+            logger.warning(bs)
+
+        return hrefs[:self.article_limit]
 
     def page_scrape(self, ref: str, local_file: bool = False) -> RSSPage:
         logger.info(f"scrape page: {ref}")
